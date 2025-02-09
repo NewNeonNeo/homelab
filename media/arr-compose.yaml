@@ -22,11 +22,15 @@ services:
     environment:
       - VPN_SERVICE_PROVIDER=airvpn
       - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=
-      - WIREGUARD_PRESHARED_KEY=
+      - WIREGUARD_PRIVATE_KEY=UPwyGo0Iejou5Lahf2mS/1QV1zXiGB5+M1yA6hlNVlQ=
+      - WIREGUARD_PRESHARED_KEY=TCnwDIrFELMCyU37an3JhzYVP+FzSUn8G5ve+l6wztE=
       - WIREGUARD_ADDRESSES=10.141.139.28
       - SERVER_COUNTRIES=CANADA
       - HEALTH_VPN_DURATION_INITIAL=120s
+      - BLOCK_MALICIOUS=off
+      - BLOCK_SURVEILLANCE=off
+      - BLOCK_ADS=off
+      - DOT=off
     healthcheck:
       test: ping -c 1 9.9.9.9 || exit 1
       interval: 60s
