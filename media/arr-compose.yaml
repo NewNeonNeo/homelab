@@ -42,7 +42,7 @@ services:
     environment:
       - LOG_LEVEL=info
       - HEALTH_SERVER_ADDRESS=127.0.0.1:9999
-      - TZ=America/Los_Angeles
+      - TZ=America/Moncton
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -57,7 +57,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Los_Angeles
+      - TZ=America/Moncton
       - WEBUI_PORT=8080
       - TORRENTING_PORT=9904
     volumes:
@@ -75,7 +75,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Los_Angeles
+      - TZ=America/Moncton
       - NZBGET_USER=user
       - NZBGET_PASS=password
     volumes:
@@ -96,7 +96,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Los_Angeles
+      - TZ=America/Moncton
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/prowlarr:/config
@@ -110,7 +110,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Los_Angeles
+      - TZ=America/Moncton
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/sonarr:/config
@@ -125,7 +125,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Los_Angeles
+      - TZ=America/Moncton
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/radarr:/config
@@ -144,7 +144,7 @@ services:
     environment:
      - PUID=1000
      - PGID=1000
-     - TZ=America/Los_Angeles
+     - TZ=America/Moncton
     ports:
       - 8686:8686
   
@@ -155,7 +155,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Los_Angeles
+      - TZ=America/Moncton
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/bazarr:/config
@@ -169,7 +169,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Los_Angeles
+      - TZ=America/Moncton
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/readarr:/config
