@@ -3,7 +3,7 @@
 # All containers are ran with user and group ids of the main user and 
 # share to aviod permissions issues of downloaded files, please refer
 # the read me file for more information.
-version: '3.9'
+version: "3.9"
 services:
   gluetun:
     image: qmcgaw/gluetun
@@ -14,7 +14,7 @@ services:
       - /dev/net/tun:/dev/net/tun
     ports:
       - 8080:8080 # qbittorrent web interface
-      - 6881:6881 # qbittorrent torrent port
+      - 6681:6881 # qbittorrent torrent port
       - 6789:6789 # nzbget
       - 9696:9696 # prowlarr
     volumes:
@@ -22,27 +22,23 @@ services:
     environment:
       - VPN_SERVICE_PROVIDER=airvpn
       - VPN_TYPE=wireguard
-      - FIREWALL_VPN_INPUT_PORTS=port
-    # - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/24 # add if prowlarr wont connect to other arr apps, change to your specific subnet
-      - WIREGUARD_PRIVATE_KEY=key
-      - WIREGUARD_PRESHARED_KEY=key
-      - WIREGUARD_ADDRESSES=ip
-      - SERVER_COUNTRIES=country
-      - SERVER_CITIES=city
+      - WIREGUARD_PRIVATE_KEY=
+      - WIREGUARD_PRESHARED_KEY=
+      - WIREGUARD_ADDRESSES=
+      - SERVER_COUNTRIES=CANADA
       - HEALTH_VPN_DURATION_INITIAL=120s
     healthcheck:
-      test: ping -c 1 www.google.com || exit 1
+      test: ping -c 1 9.9.9.9 || exit 1
       interval: 60s
-      timeout: 20s
+      timeout: 5s
       retries: 5
     restart: unless-stopped
-
-# This is a new addition since creating the tutorial video on this stack. 
-# See the 'qBittorrent Stalls with VPN Timeout' section for more information.
+  # This is a new addition since creating the tutorial video on this stack. 
+  # See the 'qBittorrent Stalls with VPN Timeout' section for more information.
   deunhealth:
     image: qmcgaw/deunhealth
     container_name: deunhealth
-    network_mode: "none"
+    network_mode: none
     environment:
       - LOG_LEVEL=info
       - HEALTH_SERVER_ADDRESS=127.0.0.1:9999
@@ -50,9 +46,8 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      
-# Healthcheck was added to work with deunhealth to restart container
-# on unhealthy status. labels allows deunhealth to monitor.
+  # Healthcheck was added to work with deunhealth to restart container
+  # on unhealthy status. labels allows deunhealth to monitor.
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
@@ -70,12 +65,10 @@ services:
       - /data:/data
     network_mode: service:gluetun
     healthcheck:
-        test: ping -c 1 www.google.com || exit 1
-        interval: 60s
-        retries: 3
-        start_period: 20s
-        timeout: 10s
-
+      test: ping -c 1 9.9.9.9 || exit 1
+      interval: 60s
+      timeout: 5s
+      retries: 5
   nzbget:
     image: lscr.io/linuxserver/nzbget:latest
     container_name: nzbget
@@ -91,6 +84,11 @@ services:
       - /data:/data
     restart: unless-stopped
     network_mode: service:gluetun
+    healthcheck:
+      test: ping -c 1 9.9.9.9 || exit 1
+      interval: 60s
+      timeout: 5s
+      retries: 5
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
