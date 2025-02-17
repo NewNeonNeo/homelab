@@ -3,6 +3,8 @@
 # All containers are ran with user and group ids of the main user and 
 # share to aviod permissions issues of downloaded files, please refer
 # the read me file for more information.
+# Torrent/download apps are proxied through Gluetun
+# Containers can communicate with each other by using the IP of the docker network default gateway(ex. 172.20.0.1)
 version: "3.9"
 services:
   gluetun:
@@ -22,9 +24,9 @@ services:
     environment:
       - VPN_SERVICE_PROVIDER=airvpn
       - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=
-      - WIREGUARD_PRESHARED_KEY=
-      - WIREGUARD_ADDRESSES=10.141.139.28
+      - WIREGUARD_PRIVATE_KEY=KEaVVHd23EYhyrtPJfTHCJY29B86bIZDpQpvuO1y4k4=
+      - WIREGUARD_PRESHARED_KEY=KNl3ZyyVm7TXap2U1DXixTLtSSdAhJBAHSIyrdW6KmM=
+      - WIREGUARD_ADDRESSES=10.177.4.25
       - SERVER_COUNTRIES=CANADA
       - HEALTH_VPN_DURATION_INITIAL=120s
       - BLOCK_MALICIOUS=off
@@ -57,7 +59,7 @@ services:
     container_name: qbittorrent
     restart: unless-stopped
     labels:
-      - deunhealth.restart.on.unhealthy= "true"
+      - deunhealth.restart.on.unhealthy="true"
     environment:
       - PUID=1000
       - PGID=1000
@@ -66,7 +68,7 @@ services:
       - TORRENTING_PORT=9904
     volumes:
       - /docker/qbittorrent:/config
-      - /data:/data
+      - /media_root:/media_root
     network_mode: service:gluetun
     healthcheck:
       test: ping -c 1 9.9.9.9 || exit 1
@@ -85,7 +87,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/nzbget:/config
-      - /data:/data
+      - /media_root:/media_root
     restart: unless-stopped
     network_mode: service:gluetun
     healthcheck:
@@ -117,7 +119,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/sonarr:/config
-      - /data:/data
+      - /media_root:/media_root
     ports:
       - 8989:8989
   radarr:
@@ -131,7 +133,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/radarr:/config
-      - /data:/data
+      - /media_root:/media_root
     ports:
       - 7878:7878
   lidarr:
@@ -141,7 +143,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/lidarr:/config
-      - /data:/data
+      - /media_root:/media_root
     environment:
       - PUID=1000
       - PGID=1000
@@ -159,7 +161,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/bazarr:/config
-      - /data:/data
+      - /media_root:/media_root
     ports:
       - 6767:6767
   readarr:
@@ -172,9 +174,21 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /docker/readarr:/config
-      - /data:/data
+      - /media_root:/media_root
     ports:
       - 8787:8787
+    restart: unless-stopped
+  flaresolverr:
+    # DockerHub mirror flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=America/Moncton
+    ports:
+      - ${PORT:-8191}:8191
     restart: unless-stopped
 networks:
   default: null
